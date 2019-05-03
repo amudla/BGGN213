@@ -1,0 +1,83 @@
+class061B
+================
+Anusorn Mudla
+4/19/2019
+
+``` r
+#install.packages("bio3d")
+```
+
+``` r
+# Can you improve this analysis code?
+library(bio3d)
+s1 <- read.pdb("4AKE") # kinase with drug
+```
+
+    ##   Note: Accessing on-line PDB file
+
+``` r
+s2 <- read.pdb("1AKE") # kinase no drug
+```
+
+    ##   Note: Accessing on-line PDB file
+    ##    PDB has ALT records, taking A only, rm.alt=TRUE
+
+``` r
+s3 <- read.pdb("1E4Y") # kinase with drug
+```
+
+    ##   Note: Accessing on-line PDB file
+
+``` r
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s2.chainA <- trim.pdb(s2, chain="A", elety="CA")
+s3.chainA <- trim.pdb(s3, chain="A", elety="CA")
+s1.b <- s1.chainA$atom$b # b = temperature factor
+s2.b <- s2.chainA$atom$b
+s3.b <- s3.chainA$atom$b
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor")
+```
+
+![](class06Worksheet_files/figure-markdown_github/unnamed-chunk-2-1.png)
+
+``` r
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor")
+```
+
+![](class06Worksheet_files/figure-markdown_github/unnamed-chunk-2-2.png)
+
+``` r
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor")
+```
+
+![](class06Worksheet_files/figure-markdown_github/unnamed-chunk-2-3.png)
+
+``` r
+# rewrite the function
+```
+
+``` r
+# Answering questions
+# Q1: What type of object is returned from the read.pdb() fucntion? 
+typeof(s1)
+```
+
+    ## [1] "list"
+
+``` r
+# Q1 answer: List
+# Q2: What does the trim.pdb() function do? Make the pdb file smaller
+?trim.pdb
+# answer: make PDB file smaller: Chain = chain identifiers, elety = atom names and we only select alpha-carbon
+# Q3: What input parameter would turn off the marginal black and grey rectangles in the plots and what do they represent in this case?
+?plotb3
+# answer: Remove the sse = s1.chainA because helix.col = "gray20", sheet.col = "gray80"
+# Q4: What would be a better plot to compare across the different proteins?
+```
+
+``` r
+hc <- hclust( dist( rbind(s1.b, s2.b, s3.b) ) )
+plot(hc)
+```
+
+![](class06Worksheet_files/figure-markdown_github/unnamed-chunk-5-1.png)
