@@ -1,0 +1,51 @@
+---
+title: "Homework_class06"
+author: "Anusorn Mudla"
+date: "4/23/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Function Documentation
+Description:
+
+The function takes PDB protein ID code as a character type for the input and plot the atomic mobility of the alpha carbon in the A chain. The function allows users to compare how mobility in changes to the protein upon any treatment such as inhibitors. 
+
+Usage:
+
+plotpdb.mobil(protein_ID)
+
+protein_ID is a string of four characters representing a PDB protein code.
+
+```{r}
+#install.packages("bio3d")
+```
+
+```{r}
+library(bio3d)
+```
+## Function
+```{r}
+plotpdb.mobil <- function(protein_ID) {
+# read the PDB data for the given protein
+  full_data <- read.pdb(protein_ID)
+# create a smaller PDB object containing only A chain and alpha carbon
+  trim_data <- trim.pdb(full_data, chain="A", elety="CA")
+# select the temperature factor "b" which indicates the mobility of the atom
+  trim_data.b <- trim_data$atom$b
+# plot the secondary structure of the protein
+  plotb3(trim_data.b, sse=trim_data, typ="l", ylab="Bfactor")
+}
+```
+
+## Test the function 
+protein ID = "4AKE" and "1AKE"
+```{r}
+plotpdb.mobil("4AKE")
+plotpdb.mobil("1AKE")
+
+```
+
