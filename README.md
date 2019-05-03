@@ -1,10 +1,4 @@
 # BGGN213 
 
-This is a work-in-progress to combine the class lecture.
+This is a work-in-progress to combine the class lecture. The class lectures can be found at [the class website](https://bioboot.github.io/bggn213_S19/lectures/#10).
 
-This is a lecture file on Git 
-This is the first git project I created. The project is base on the [lecture 10](https://bioboot.github.io/bggn213_S19/lectures/#10) lecture.
-
-Test 2 (pull something from the website)
-
-This the a new message I want add to the file. 
