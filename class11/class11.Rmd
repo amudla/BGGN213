@@ -1,0 +1,91 @@
+---
+title: "Class11: Structural Bioinformatics"
+author: "Anusorn Mudla"
+date: "5/8/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Question 1: 
+Download a csv file from: http://www.rcsb.org/stats/summary on 2019-05-08
+
+```{r}
+#read the csv file
+PBD <- read.csv("Data Export Summary.csv", header = TRUE)
+#find the percent of X-ray
+PBD$Total/sum(PBD$Total)*100
+```
+
+```{r}
+# percent for protein
+sum(PBD$Proteins)/sum(PBD$Total)*100
+```
+## VMD
+using vmd to visualize protein structure from PDB file as "!["1HSG"]("vmdscene.tga")"
+
+## Bio3D
+```{r}
+library(bio3d)
+pdb <- read.pdb("1hsg.pdb")
+```
+
+#Atom selection
+```{r}
+atom.select(pdb,resno = 10, value = TRUE)
+```
+### Make a protein only and ligand only PDB file
+```{r}
+protein <- atom.select(pdb,"protein",value = TRUE)
+protein
+write.pdb(protein, file = "1hsg_protein.pdb")
+```
+
+```{r}
+ligand <- atom.select(pdb,"ligand",value = TRUE)
+ligand
+write.pdb(ligand,file = "1hsg_ligand.pdb")
+```
+```{r}
+# install.packages("devtools")
+# devtools::install_bitbucket("Grantlab/bio3d-view")
+```
+```{r}
+library(bio3d.view)
+view(pdb, "overview", col="sse")
+view(protein,"overview",col="atom")
+```
+
+## Section 6.2 
+```{r}
+# Download some example PDB files
+ids <- c("1TND_B","1AGR_A","1TAG_A","1GG2_A","1KJY_A","4G5Q_A") 
+files <- get.pdb(ids,split = TRUE)
+```
+
+```{r}
+# Extract and align the chains we are interested in
+pdbs <- pdbaln(files, fit = TRUE)
+# Print to screen a summary of the 'pdbs' object
+pdbs
+```
+
+```{r}
+# Access the first 5 rows, and 8 columns. 
+pdbs$ali[1:5, 1:8]
+```
+```{r}
+# Associated residues numbers
+pdbs$resno[1:5, 1:8]
+```
+```{r}
+# Calculate sequence identity
+seqidentity(pdbs)
+```
+```{r}
+# Calculate RMSD
+rmsd(pdbs)
+```
+
