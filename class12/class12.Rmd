@@ -1,0 +1,67 @@
+---
+title: "class12"
+author: "Anusorn Mudla"
+date: "5/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(bio3d)
+# download the pdb file for 1hsg protein
+file <- get.pdb("1hsg")
+# read the pdb file
+hiv <- read.pdb(file)
+#print summary of the file
+hiv
+write.pdb(hiv,file = "1hsg.pdb")
+```
+Q1: What is the name of the two non protein resid values in this structure? What does resid correspond to and how would you get a listing of all reside values in this structure?
+```{r}
+#hiv$atom[!resid==PRO]
+```
+
+```{r}
+protein <- atom.select(hiv,"protein",value = TRUE)
+protein
+write.pdb(protein,file = "1hsg_protein.pdb")
+```
+```{r}
+ligand <- atom.select(hiv,"ligand",value = TRUE)
+ligand
+write.pdb(ligand,file = "1hsg_ligand.pdb")
+```
+## Add the hydrogen pdb files: both proetein and ligand and save them as pdbqt files
+
+# generate the config.txt file
+
+# perform the docking with AutoDock Vina using the terminal command
+
+```{r}
+res <- read.pdb("all.pdbqt", multi=TRUE)
+res
+write.pdb(res, "results.pdb")
+```
+
+compare our docking poses to the MERK drug structure
+```{r}
+ori <- read.pdb("1hsg_ligand.pdbqt")
+rmsd(ori,res)
+```
+
+#Section 3: Exploring the conformational dynamics of proteins
+```{r}
+library(bio3d)
+pdb <- read.pdb("1HEL")
+modes <- nma(pdb) 
+plot(modes, sse=pdb)
+ # Visualize NMA results
+# this will show the movement of the molecules
+mktrj(modes, mode=7, file="nma_7.pdb")
+
+```
+
+
