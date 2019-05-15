@@ -1,0 +1,72 @@
+---
+title: "class13"
+author: "Anusorn Mudla"
+date: "5/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Today lecture is on Genome informatics and high throughput sequencing
+
+#Section 1: Identify genetic variants of interest
+Use the OMIM database to search for SNP in asthma patients and look for one of the SNP
+Q5:
+```{r}
+mxl <- read.csv("373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv")
+head(mxl)
+```
+
+```{r}
+#find out the number of each allele type
+table(mxl$Genotype..forward.strand.)
+#proportion
+round(table(mxl$Genotype..forward.strand.)/nrow(mxl)*100,2)
+```
+
+## Quality scores in FASTQ files
+```{r}
+library(seqinr)
+library(gtools)
+asc( s2c("DDDDCDEDCDDDDBBDDDCC@") )
+```
+
+## section 4
+```{r}
+#import data
+expr <- read.table("rs8067378_ENSG00000172057.6.txt",header = TRUE)
+```
+```{r}
+summary(expr)
+```
+
+```{r}
+library(dplyr)
+groups <- group_by(expr,geno)
+```
+
+```{r}
+inds <- (expr$geno == "G/G")
+summary(expr[inds,]$exp)
+```
+
+```{r}
+inds <- (expr$geno == "A/A")
+summary(expr[inds,]$exp)
+```
+
+```{r}
+inds <- (expr$geno == "A/G")
+summary(expr[inds,]$exp)
+```
+Box plot to show distribution of expression for each genotype
+```{r}
+boxplot(data =expr, exp~geno, notch = TRUE)
+```
+Plot with ggplot2
+```{r}
+library(ggplot2)
+```
+
