@@ -139,4 +139,17 @@ boxplot(data =expr, exp~geno, notch = TRUE)
 
 ``` r
 library(ggplot2)
+p <- ggplot(expr, aes(x=geno, y=exp,fill = geno)) + geom_boxplot(notch = TRUE,outlier.colour="red", outlier.shape=16,outlier.size=2)
+#add data points to the boxplot
+p+geom_jitter(col = "black",alpha = 0.5, shape=16, position=position_jitter(0.2))
 ```
+
+![](class13_files/figure-markdown_github/unnamed-chunk-11-1.png)
+
+``` r
+p+ geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5)
+```
+
+    ## `stat_bindot()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](class13_files/figure-markdown_github/unnamed-chunk-11-2.png)

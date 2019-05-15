@@ -2,7 +2,7 @@
 title: "class13"
 author: "Anusorn Mudla"
 date: "5/15/2019"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -68,5 +68,9 @@ boxplot(data =expr, exp~geno, notch = TRUE)
 Plot with ggplot2
 ```{r}
 library(ggplot2)
+p <- ggplot(expr, aes(x=geno, y=exp,fill = geno)) + geom_boxplot(notch = TRUE,outlier.colour="red", outlier.shape=16,outlier.size=2)
+#add data points to the boxplot
+p+geom_jitter(col = "black",alpha = 0.5, shape=16, position=position_jitter(0.2))
+p+ geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5)
 ```
 
