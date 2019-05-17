@@ -1,0 +1,197 @@
+---
+title: "class14: Transcriptomics and the analysis of RNA-Seq data"
+author: "Anusorn Mudla"
+date: "5/17/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Today lecture is Transcriptomics and the analysis of RNA-Seq data using BiocManager package.
+
+```{r}
+library(BiocManager)
+library(DESeq2)
+```
+
+```{r}
+counts <- read.csv("airway_scaledcounts.csv", stringsAsFactors = FALSE)
+metadata <-  read.csv("airway_metadata.csv", stringsAsFactors = FALSE)
+```
+```{r}
+#Q1 nunber of genes
+nrow(counts)
+#Q2 control cell line
+sum(metadata$dex=="control")
+```
+check if the names in the counts data is the same in the metadata
+```{r}
+all(colnames(counts)[-1]==metadata$id)
+```
+Select the control group
+```{r}
+control <- metadata[metadata$dex=="control",]
+control.mean <- rowSums( counts[ ,control$id] )/length(control$id) 
+names(control.mean) <- counts$ensgene
+```
+Select the treated group
+```{r}
+treated <- metadata[metadata$dex=="treated",]
+treated.mean <- rowSums( counts[ ,treated$id] )/length(treated$id) 
+names(treated.mean) <- counts$ensgene
+```
+Combine the control.mean and treated.mean data into one dataframe
+```{r}
+meancount <- data.frame(control.mean,treated.mean)
+head(meancount)
+```
+
+plot the compare the control and treated
+```{r}
+plot(meancount,log="xy")
+```
+```{r}
+meancount$log2fc <- log2(meancount[,"treated.mean"]/meancount[,"control.mean"])
+head(meancount)
+```
+Remove data that are not number
+```{r}
+to.rm <- unique(which(meancount[,1:2]==0, arr.ind=TRUE)[,1])
+mycounts <- meancount[-to.rm,]
+head(mycounts)
+
+```
+find how many genes are up or down regulated for 2 fold change
+Up regulated genes
+```{r}
+up.ind <- mycounts$log2fc > 2
+sum(up.ind)
+```
+Down regulated genes
+```{r}
+down.ind <- mycounts$log2fc < (-2)
+sum(down.ind)
+```
+Looking at both up and down regulated
+```{r}
+ind.both <- abs(mycounts$log2fc) > 2
+sum(ind.both)
+```
+
+#Section 4: Adding annotation data
+```{r}
+annotation <- read.csv("annotables_grch38.csv")
+
+```
+Use **merge()** function to add annotation to the mycounts data
+```{r}
+mycount.anno <- merge(x=mycounts,y=annotation,by.x = "row.names",by.y = "ensgene")
+```
+
+Use BiocManager package to annotate the data
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+```
+
+```{r}
+columns(org.Hs.eg.db)
+```
+
+```{r}
+mycounts$symbol <- mapIds(org.Hs.eg.db,
+                   keys=row.names(mycounts),
+                   keytype="ENSEMBL",
+                   column="SYMBOL",
+                   multiVals="first")
+```
+
+```{r}
+mycounts$entrez <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mycounts),
+                     column="ENTREZID",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+```
+
+```{r}
+mycounts$uniprot <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mycounts),
+                     column="UNIPROT",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+```
+
+```{r}
+head(mycounts)
+```
+#Section 5: DESeq2 analysis
+```{r}
+library(DESeq2)
+```
+```{r}
+dds <- DESeqDataSetFromMatrix(countData=counts, 
+                              colData=metadata, 
+                              design=~dex, 
+                              tidy=TRUE)
+dds
+```
+```{r}
+dds <- DESeq(dds)
+```
+
+```{r}
+res <- results(dds)
+res <- as.data.frame(res)
+summary(res)
+```
+
+```{r}
+res05 <- results(dds,alpha=0.05)
+summary(res05)
+```
+
+#Section 6: Volcano plot
+```{r}
+# add color to the dots
+mycols <- rep("black", nrow(res))
+mycols[ res$padj <0.05 ]  <- "red" 
+
+mycols[res$padj < 0.05 & abs(res$log2FoldChange) > 2] <- "blue"
+
+# plot
+plot( res$log2FoldChange,  -log(res$padj), 
+      xlab="Log2(FoldChange)",
+      ylab="-Log(P-value)",
+      col = mycols)
+
+# Add some cut-off lines
+abline(v=c(-2,2), col="red", lty=2)
+abline(h=-log(0.05), col="red", lty=2)
+
+```
+
+Another way to plot the graph with the Enhanced. But first need to put proper 
+
+```{r}
+x <- as.data.frame(res)
+x$symbol <- mapIds(org.Hs.eg.db, 
+                   keys=row.names(x),
+                   keytype="ENSEMBL",
+                   column="SYMBOL",
+                   multiVals="first")
+```
+
+```{r}
+#BiocManager::install("EnhancedVolcano")
+```
+```{r}
+library(EnhancedVolcano)
+EnhancedVolcano(x,
+    lab = x$symbol,
+    x = 'log2FoldChange',
+    y = 'pvalue')
+```
+
