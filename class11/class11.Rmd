@@ -2,7 +2,7 @@
 title: "Class11: Structural Bioinformatics"
 author: "Anusorn Mudla"
 date: "5/8/2019"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
