@@ -1,8 +1,8 @@
 ---
-title: "class12"
+title: "class12: Bioinformatics in drug discovery and design"
 author: "Anusorn Mudla"
 date: "5/10/2019"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -34,11 +34,11 @@ ligand <- atom.select(hiv,"ligand",value = TRUE)
 ligand
 write.pdb(ligand,file = "1hsg_ligand.pdb")
 ```
-## Add the hydrogen pdb files: both proetein and ligand and save them as pdbqt files
+*Add the hydrogen pdb files: both proetein and ligand and save them as pdbqt files
 
-# generate the config.txt file
+*generate the config.txt file
 
-# perform the docking with AutoDock Vina using the terminal command
+*perform the docking with AutoDock Vina using the terminal command
 
 ```{r}
 res <- read.pdb("all.pdbqt", multi=TRUE)
@@ -52,7 +52,7 @@ ori <- read.pdb("1hsg_ligand.pdbqt")
 rmsd(ori,res)
 ```
 
-#Section 3: Exploring the conformational dynamics of proteins
+##Section 3: Exploring the conformational dynamics of proteins
 ```{r}
 library(bio3d)
 pdb <- read.pdb("1HEL")
