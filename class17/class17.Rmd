@@ -1,5 +1,5 @@
 ---
-title: "class17"
+title: "Class17: Biological Network Analysis"
 author: "Anusorn Mudla"
 date: "5/29/2019"
 output: github_document
@@ -8,19 +8,23 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Part 1: Using Cytoscape to visualize biological network
+Use Cytoscape Program to look at a network 
 
-```{r}
+# Part 2: Metagenomics co-occurence networks
+Set up Cytoscope and R connection
+```{r results='hide'}
 library(RCy3)
 library(igraph)
 library(RColorBrewer)
 ```
 
-```{r}
+```{r results='hide'}
 cytoscapePing()
 ```
 
 ```{r}
-# Check the version
+# Check the version of cytoscape
 cytoscapeVersionInfo()
 ```
 
@@ -28,7 +32,7 @@ cytoscapeVersionInfo()
 g <- makeSimpleIgraph()
 createNetworkFromIgraph(g,"myGraph")
 ```
-
+!["Demo Network"](demo.png)
 ```{r}
 fig <- exportImage(filename="demo", type="png", height=350)
 ```
@@ -43,7 +47,6 @@ setVisualStyle("Marquee")
 
 ```{r}
 fig <- exportImage(filename="demo_marquee", type="png", height=350)
-
 knitr::include_graphics("./demo_marquee.png")
 ```
 
@@ -56,6 +59,7 @@ styles
 plot(g)
 ```
 
+## Read our metagenomics data
 ```{r}
 ## scripts for processing located in "inst/data-raw/"
 prok_vir_cor <- read.delim("virus_prok_cor_abundant.tsv", stringsAsFactors = FALSE)
@@ -66,9 +70,6 @@ head(prok_vir_cor)
 
 ```{r}
 g <- graph.data.frame(prok_vir_cor, directed = FALSE)
-```
-
-```{r}
 class(g)
 ```
 
@@ -84,7 +85,7 @@ plot(g, vertex.size=3, vertex.label=NA)
 ```
 
 # Use **ggplot2** to plot the network
-```{r}
+```{r results='hide'}
 library(ggplot2)
 library(ggraph)
 ```
@@ -101,11 +102,11 @@ V(g)
 E(g)
 ```
 # Network community detection
-```{r}
+```{r results='hide'}
 cb <- cluster_edge_betweenness(g)
 ```
-```{r results=hide}
-cd
+```{r results='hide'}
+cb
 ```
 
 ```{r}
@@ -139,10 +140,6 @@ v.size <- BBmisc::normalize(pr$vector, range=c(2,20), method="range")
 plot(g, vertex.size=v.size, vertex.label=NA)
 ```
 
-```{r}
-v.size <- BBmisc::normalize(d, range=c(2,20), method="range")
-plot(g, vertex.size=v.size, vertex.label=NA)
-```
 
 ```{r}
 b <- betweenness(g)
@@ -150,19 +147,19 @@ v.size <- BBmisc::normalize(b, range=c(2,20), method="range")
 plot(g, vertex.size=v.size, vertex.label=NA)
 ```
 #Read taxonomic classification for network annotation
-```{r results=hide}
+```{r results='hide'}
 phage_id_affiliation <- read.delim("phage_ids_with_affiliation.tsv")
 head(phage_id_affiliation)
 ```
 
-```{r results=hide}
+```{r results='hide'}
 bac_id_affi <- read.delim("prok_tax_from_silva.tsv", stringsAsFactors = FALSE)
 head(bac_id_affi)
 ```
 
 
 # Add taxonomic annotation data to network
-```{r results=hide}
+```{r results='hide'}
 ## Extract out our vertex names
 genenet.nodes <- as.data.frame(vertex.attributes(g), stringsAsFactors=FALSE)
 head(genenet.nodes)
@@ -177,7 +174,7 @@ z <- bac_id_affi[,c("Accession_ID", "Kingdom", "Phylum", "Class")]
 n <- merge(genenet.nodes, z, by.x="name", by.y="Accession_ID", all.x=TRUE)
 head(n)
 ```
-```{r results=hide}
+```{r results='hide'}
 # Again we only need a subset of `phage_id_affiliation` for our purposes
 y <- phage_id_affiliation[, c("first_sheet.Phage_id_network", "phage_affiliation","Tax_order", "Tax_subfamily")]
 
