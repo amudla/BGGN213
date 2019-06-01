@@ -1,5 +1,5 @@
 ---
-title: "class14: Transcriptomics and the analysis of RNA-Seq data"
+title: "Class14: Transcriptomics and the analysis of RNA-Seq data"
 author: "Anusorn Mudla"
 date: "5/17/2019"
 output: github_document
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Today lecture is Transcriptomics and the analysis of RNA-Seq data using BiocManager package.
 
-```{r}
+```{r results='hide', massage = FALSE, warning=FALSE}
 library(BiocManager)
 library(DESeq2)
 ```
@@ -49,7 +49,7 @@ head(meancount)
 ```
 
 plot the compare the control and treated
-```{r}
+```{r results='hide'}
 plot(meancount,log="xy")
 ```
 ```{r}
@@ -91,7 +91,7 @@ mycount.anno <- merge(x=mycounts,y=annotation,by.x = "row.names",by.y = "ensgene
 ```
 
 Use BiocManager package to annotate the data
-```{r}
+```{r results='hide'}
 library("AnnotationDbi")
 library("org.Hs.eg.db")
 ```

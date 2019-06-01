@@ -1,4 +1,4 @@
-class14: Transcriptomics and the analysis of RNA-Seq data
+Class14: Transcriptomics and the analysis of RNA-Seq data
 ================
 Anusorn Mudla
 5/17/2019
