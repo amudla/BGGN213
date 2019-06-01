@@ -1,0 +1,119 @@
+---
+title: "class18"
+author: "Anusorn Mudla"
+date: "5/31/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Cancer Genomics 
+##Part1: Investigating cancer genomics datasets
+###Section 1: The NCI Genomic Data Commons
+Explore the cancer data online from https://portal.gdc.cancer.gov 
+
+###Section 2: The GenomicDataCommons R Packgage
+Install packages to use R for explore the NCI Genomic Data Commons (GDC)
+```{r eval=FALSE}
+BiocManager::install(c("GenomicDataCommons", "TCGAbiolinks", "maftools"))
+```
+
+```{r results='hide', include=FALSE}
+library(GenomicDataCommons)
+library(TCGAbiolinks)
+library(maftools)
+```
+ Check the GDC status
+```{r }
+status()
+```
+Querying the GDC from R
+```{r}
+projects <- getGDCprojects()
+head(projects)
+```
+```{r}
+cases_by_project <- cases() %>%
+  facet("project.project_id") %>%
+  aggregations()
+head(cases_by_project)
+```
+Make bar plot
+```{r}
+x <- cases_by_project$project.project_id
+
+# Make a custom color vector for our plot
+colvec <- rep("lightblue", nrow(x))
+colvec[x$key == 'TCGA-PAAD' ] <- "red"
+
+# Plot with 'log' for y axis and rotate labels with 'las'
+par(mar = c(9.1, 4.1, 4.1, 2.1))
+barplot(x$doc_count, names.arg=x$key, log="y", col=colvec, las=2)
+
+```
+
+```{r results='hide', include=FALSE}
+oldpar <- par()
+```
+
+## Part 2:Designing a personalized cancer vaccine
+```{r results='hide', include = FALSE}
+library(bio3d)
+```
+Align WT and Mutant Protein Sequences
+```{r}
+alignment <- read.fasta("lecture18_sequences.fa")
+results <- seqaln(alignment)
+results
+```
+Remove gaps 
+```{r results='hide'}
+gaps <- gap.inspect(results$ali)
+results.nogap <- results$ali[,!gaps$col]
+```
+``` {r }
+# find the position of the mutation
+id <- conserv(results.nogap, method = "identity")
+mut.position <- which(id<1)
+mut.position
+```
+
+```{r}
+## Make a "names" label for our output sequences (one per mutant)
+mutant.names <- paste0(results$ali["P53_wt",mut.position],
+                       mut.position,
+                       results$ali["P53_mutant",mut.position])
+
+mutant.names
+```
+
+```{r}
+## Sequence positions surounding each mutant site
+start.position <- mut.position - 8
+end.position <-  mut.position + 8
+```
+```{r}
+# Blank matrix to store sub-sequences
+store.seqs <- matrix("-", nrow=length(mut.position), ncol=17)
+rownames(store.seqs) <- mutant.names
+```
+
+```{r}
+## Extract each sub-sequence
+for(i in 1:length(mut.position)) {
+  store.seqs[i,] <- results$ali["P53_mutant",start.position[i]:end.position[i]]
+}
+```
+
+```{r}
+## First blank out the gap positions 
+store.seqs[store.seqs == "-"] <- ""
+```
+
+```{r}
+## Output a FASTA file for further analysis
+write.fasta(seqs=store.seqs, ids=mutant.names, file="subsequences.fa")
+```
+
