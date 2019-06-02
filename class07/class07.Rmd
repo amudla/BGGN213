@@ -1,0 +1,129 @@
+---
+title: "Class07: R function and packages"
+author: "Anusorn Mudla"
+date: "4/24/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Today lecture is more on writing R function and will introduce R packages
+
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+Test the **rescale()** function 
+
+```{r}
+rescale(c(1:10))
+```
+
+```{r}
+x <- c(1,2,NA)
+y <- c(1,3,NA)
+# check for NA in the vector
+is.na(x)
+is.na(y)
+# check if both vector has NA at the same position
+is.na(x) & is.na(y)
+# check how many NA in both vector
+sum(is.na(x) & is.na(y))
+```
+
+```{r}
+# turn the snipple into a fuction
+both_na <- function(x,y) {
+  sum( is.na(x) & is.na(y) )
+}
+both_na(x,y)
+
+```
+```{r}
+# check the length of the vector before operate on them
+both_na2 <- function(x, y) {
+  ## Check for NA elements in both input vectors and don't allow re-cycling 
+  if(length(x) != length(y)) {
+    stop("Input x and y should be vectors of the same length", call.=FALSE)
+  }
+  sum( is.na(x) & is.na(y) )
+}
+```
+```{r}
+#adding some messages to the end of function
+both_na3(x,y)
+```
+
+## Writing the grade function
+```{r}
+#student 1
+std1 <- c(100,100,100,100,100,100,100,90)
+std2 <- c(100,NA,90,90,90,90,97,80)
+
+index.remove <- which.min(std1)
+std1.new <- std1[-index.remove]
+std1.new
+mean(std1.new)
+
+```
+
+```{r}
+grade <- function(score) {
+  #remove the na from the score
+  score.noNA <- score[!is.na(score)]
+  index.remove <- which.min(score.noNA)
+  score.new <- score.noNA[-index.remove]
+  mean(score.new)
+}
+```
+
+```{r}
+# for not turning in homework will not have negative effect
+grade2 <- function(score) {
+  (sum(score,na.rm = TRUE)-min(score, na.rm = TRUE)) / (length(score[!is.na(score)])-1)
+}
+```
+
+```{r}
+# for not turing 
+grade3 <- function(score) {
+  (sum(score,na.rm = TRUE)-min(score, na.rm = TRUE)) / (length(score)-1)
+}
+```
+
+```{r}
+## apply the function to the csv file
+url <- "http://tinyurl.com/gradeinput"
+class_data <- read.csv(url,row.names = 1)
+
+grade2(class_data[1,])
+
+# use the apply function to each row. 1 = by row and 2 = by column
+average <- apply(class_data,1,grade3)
+# sort the average to rank student
+sort(average, decreasing = TRUE)
+## add the aveage column to the class data
+class_data$average <- apply(class_data,1,grade3)
+# how to sort the data frame by any particular column
+```
+
+### find intersaction between two vectors
+```{r}
+x <- df1$IDs
+y <- df2$IDs
+intersect(x,y)
+
+x %in% y
+```
+```{r}
+gene_intersect <- function(x, y) {
+  cbind(x[x %in% y], y[y %in% x])
+}
+```
+```{r}
+merge(df1,df2,by= "IDs")
+```
+
+
+
