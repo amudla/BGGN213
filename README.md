@@ -9,8 +9,8 @@ Class 6: ![R-Functions](class06/class06.md)
 Class 7: ![R-packages](class07/class07.md)
 Class 8: ![Introduction to Machine Learning](class08/class08.md)
 Class 9: ![Unsupervised Learning](class09/class09.md)
-Class 11: ![Structural Bioinformatics]
-Class 12: ![Bioinformatincs in Drug Discory and Design]
+Class 11: ![Structural Bioinformatics](class11/class11.md)
+Class 12: ![Bioinformatincs in Drug Discory and Design](/class12/class12.md)
 Class 13: ![Genome informatics and high throughput sequencing]
 Class 14: ![Transcriptomics and the analysis of RNA-Seq data]
 Class 15: ![Genome annotation and the interpretation of gene lists]
