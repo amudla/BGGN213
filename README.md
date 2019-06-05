@@ -28,3 +28,5 @@ Class 17: [Biological network analysis](class17/class17.md)
 
 Class 18: [Cancer genomics](class18/class18.md)
 
+FindGene Project: [Novel STAT1](https://github.com/amudla/BGGN213/blob/master/midterm/BGGN213_SP19_amudla.pdf)
+
