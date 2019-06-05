@@ -5,7 +5,9 @@ This is a collection of hand-on worksheet. All of the the class lectures can be 
 The class contents includes:
 
 Class 5: ![R-Graphics](class05/class05.html) 
+
 Class 6: ![R-Functions](class06/class06.md)
+
 Class 7: ![R-packages](class07/class07.md)
 Class 8: ![Introduction to Machine Learning](class08/class08.md)
 Class 9: ![Unsupervised Learning](class09/class09.md)
